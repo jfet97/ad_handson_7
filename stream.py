@@ -55,7 +55,10 @@ class mystream:
   def tokenizedTweet (self):
     r = "".join ([" " for i in range (len (string.punctuation))])
     out = self.currentline[3].translate(str.maketrans(string.punctuation,r))
-    return out.split ()
+    return out.split()
+  
+  def length(self):
+    return len(self.currentline[3])
   
   def reset(self):
     self.pf.seek(0)

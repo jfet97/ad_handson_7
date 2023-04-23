@@ -131,18 +131,41 @@ def question3(lc_size, k, stream):
           lc_happy_users_multiple.count_estimation())
 
 
+def question4(ss_size, how_many_counts, stream):
+    tweet = stream.nextRecord()
+
+    happy_len_counter = SpaceSaving(ss_size)
+    unhappy_len_counter = SpaceSaving(ss_size)
+
+    while tweet is not None:
+        if stream.ispositive():
+            happy_len_counter.add(stream.length())
+        else:
+            unhappy_len_counter.add(stream.length())
+        tweet = stream.nextRecord()
+
+    print("happy_len_counter", happy_len_counter.query(how_many_counts))
+    print("unhappy_len_counter", unhappy_len_counter.query(how_many_counts))
+
+    print("avg_happy_msg_len", int(sum(map(
+        lambda c: c[0], happy_len_counter.query(how_many_counts))) / how_many_counts))
+    print("avg_unhappy_msg_len", int(sum(map(
+        lambda c: c[0], unhappy_len_counter.query(how_many_counts))) / how_many_counts))
+
+
 if __name__ == "__main__":
 
     dataset = DS.HandsonDatasets.HUGE
     print("input: " + dataset.path)
 
     stream = mystream(dataset.path)
-
     # question1(dataset.sizes[0], stream)
-    # stream.reset()
 
+    # stream.reset()
     # question2(dataset.sizes[1], 30, stream)
-    # stream.reset()
 
-    question3(dataset.sizes[2], 4, stream)
+    # stream.reset()
+    # question3(dataset.sizes[2], 4, stream)
+
     stream.reset()
+    question4(dataset.sizes[3], 30, stream)
