@@ -1,0 +1,33 @@
+[[package]]
+name = "bitarray"
+version = "2.7.3"
+description = "efficient arrays of booleans -- C extension"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "numpy"
+version = "1.22.2"
+description = "NumPy is the fundamental package for array computing with Python."
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[[package]]
+name = "smhasher"
+version = "0.150.1"
+description = "Python extension for smhasher hash functions"
+category = "main"
+optional = false
+python-versions = "*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = ">=3.8.0,<3.9"
+content-hash = "bc7922f41b9797461e2ae363fe2d0cf7875e60c0782189c04a3c6b6ccba53749"
+
+[metadata.files]
+bitarray = []
+numpy = []
+smhasher = []
