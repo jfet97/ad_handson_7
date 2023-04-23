@@ -6,9 +6,9 @@ class Dataset():
     self.sizes = sizes
 
 class HandsonDatasets:
-  SMALL = Dataset("mini.csv", [5000, 40, 5000, 40])
-  MEDIUM = Dataset("sample.csv", [12000, 400, 30000, 400])
-  HUGE = Dataset("output.csv", [250000, 400, 700000, 400])
+  SMALL = Dataset("mini.csv", [5000, 40, 5000, 144])
+  MEDIUM = Dataset("sample.csv", [12000, 400, 30000, 144])
+  HUGE = Dataset("output.csv", [250000, 400, 700000, 144])
 
 
   
