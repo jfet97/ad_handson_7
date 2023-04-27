@@ -35,11 +35,12 @@ def question1(lc_size, stream):
         dayPart.NIGHT: lc_night_tweets
     }
 
+    happy_users_exact = set()
     day_part_happy_exact = {
-        dayPart.MORNING: 0,
-        dayPart.AFTERNOON: 0,
-        dayPart.EVENING: 0,
-        dayPart.NIGHT: 0
+        dayPart.MORNING: set(),
+        dayPart.AFTERNOON: set(),
+        dayPart.EVENING: set(),
+        dayPart.NIGHT: set()
     }
 
     tweet = stream.nextRecord()
@@ -54,7 +55,8 @@ def question1(lc_size, stream):
 
         # debug
         if stream.ispositive():
-            day_part_happy_exact[stream.timeBin()] += 1
+            happy_users_exact.add(username)
+            day_part_happy_exact[stream.timeBin()].add(username)
 
         tweet = stream.nextRecord()
 
@@ -72,16 +74,16 @@ def question1(lc_size, stream):
 
     print(
         "morning_happy_exact",
-        day_part_happy_exact[dayPart.MORNING])
+        len(day_part_happy_exact[dayPart.MORNING]))
     print(
         "afternoon_happy_exact",
-        day_part_happy_exact[dayPart.AFTERNOON])
+        len(day_part_happy_exact[dayPart.AFTERNOON]))
     print(
         "evening_happy_exact",
-        day_part_happy_exact[dayPart.EVENING])
+        len(day_part_happy_exact[dayPart.EVENING]))
     print(
         "night_happy_exact",
-        day_part_happy_exact[dayPart.NIGHT])
+        len(day_part_happy_exact[dayPart.NIGHT]))
 
     print(
         "morning_happy",
@@ -98,16 +100,16 @@ def question1(lc_size, stream):
 
     print(
         "morning_happy_exact_percentage",
-        day_part_happy_exact[dayPart.MORNING] / sum(day_part_happy_exact.values()))
+        len(day_part_happy_exact[dayPart.MORNING]) / len(happy_users_exact))
     print(
         "afternoon_happy_exact_percentage",
-        day_part_happy_exact[dayPart.AFTERNOON] / sum(day_part_happy_exact.values()))
+        len(day_part_happy_exact[dayPart.AFTERNOON]) / len(happy_users_exact))
     print(
         "evening_happy_exact_percentage",
-        day_part_happy_exact[dayPart.EVENING] / sum(day_part_happy_exact.values()))
+        len(day_part_happy_exact[dayPart.EVENING]) / len(happy_users_exact))
     print(
         "night_happy_exact_percentage",
-        day_part_happy_exact[dayPart.NIGHT] / sum(day_part_happy_exact.values()))
+        len(day_part_happy_exact[dayPart.NIGHT]) / len(happy_users_exact))
 
     print(
         "morning_happy_percentage",
