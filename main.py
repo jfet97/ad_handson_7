@@ -35,6 +35,13 @@ def question1(lc_size, stream):
         dayPart.NIGHT: lc_night_tweets
     }
 
+    day_part_happy_exact = {
+        dayPart.MORNING: 0,
+        dayPart.AFTERNOON: 0,
+        dayPart.EVENING: 0,
+        dayPart.NIGHT: 0
+    }
+
     tweet = stream.nextRecord()
     while tweet is not None:
         username = stream.username()
@@ -44,6 +51,10 @@ def question1(lc_size, stream):
 
         hapyness_to_lc[stream.ispositive()].add(username)
         day_part_to_lc[stream.timeBin()].add(username)
+
+        # debug
+        if stream.ispositive():
+            day_part_happy_exact[stream.timeBin()] += 1
 
         tweet = stream.nextRecord()
 
@@ -60,19 +71,58 @@ def question1(lc_size, stream):
           lc_unhappy_users.count_estimation() / lc_users.count_estimation())
 
     print(
+        "morning_happy_exact",
+        day_part_happy_exact[dayPart.MORNING])
+    print(
+        "afternoon_happy_exact",
+        day_part_happy_exact[dayPart.AFTERNOON])
+    print(
+        "evening_happy_exact",
+        day_part_happy_exact[dayPart.EVENING])
+    print(
+        "night_happy_exact",
+        day_part_happy_exact[dayPart.NIGHT])
+
+    print(
         "morning_happy",
+        happy_morning_users.count_estimation())
+    print(
+        "afternoon_happy",
+        happy_afternoon_users.count_estimation())
+    print(
+        "evening_happy",
+        happy_evening_users.count_estimation())
+    print(
+        "night_happy",
+        happy_night_users.count_estimation())
+
+    print(
+        "morning_happy_exact_percentage",
+        day_part_happy_exact[dayPart.MORNING] / sum(day_part_happy_exact.values()))
+    print(
+        "afternoon_happy_exact_percentage",
+        day_part_happy_exact[dayPart.AFTERNOON] / sum(day_part_happy_exact.values()))
+    print(
+        "evening_happy_exact_percentage",
+        day_part_happy_exact[dayPart.EVENING] / sum(day_part_happy_exact.values()))
+    print(
+        "night_happy_exact_percentage",
+        day_part_happy_exact[dayPart.NIGHT] / sum(day_part_happy_exact.values()))
+
+    print(
+        "morning_happy_percentage",
         happy_morning_users.count_estimation() /
         lc_happy_users.count_estimation())
     print(
-        "afternoon_happy",
+        "afternoon_happy_percentage",
         happy_afternoon_users.count_estimation() /
         lc_happy_users.count_estimation())
     print(
-        "evening_happy",
+        "evening_happy_percentage",
         happy_evening_users.count_estimation() /
         lc_happy_users.count_estimation())
     print(
-        "night_happy",
+        "night_happy_percentage",
         happy_night_users.count_estimation() /
         lc_happy_users.count_estimation())
 
@@ -155,11 +205,11 @@ def question4(ss_size, how_many_counts, stream):
 
 if __name__ == "__main__":
 
-    dataset = DS.HandsonDatasets.HUGE
+    dataset = DS.HandsonDatasets.MEDIUM
     print("input: " + dataset.path)
 
     stream = mystream(dataset.path)
-    # question1(dataset.sizes[0], stream)
+    question1(dataset.sizes[0], stream)
 
     # stream.reset()
     # question2(dataset.sizes[1], 30, stream)
@@ -167,5 +217,5 @@ if __name__ == "__main__":
     # stream.reset()
     # question3(dataset.sizes[2], 4, stream)
 
-    stream.reset()
-    question4(dataset.sizes[3], 30, stream)
+    # stream.reset()
+    # question4(dataset.sizes[3], 30, stream)
