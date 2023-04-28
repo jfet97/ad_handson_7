@@ -17,8 +17,8 @@ def question1(lc_size, stream):
 
     # exact number of users just to check if things are done well
     users = set()
-
     lc_users = LinearCounter(lc_size)
+
     lc_happy_users = LinearCounter(lc_size)
     lc_unhappy_users = LinearCounter(lc_size)
     lc_morning_tweets = LinearCounter(lc_size)
@@ -53,7 +53,7 @@ def question1(lc_size, stream):
         hapyness_to_lc[stream.ispositive()].add(username)
         day_part_to_lc[stream.timeBin()].add(username)
 
-        # debug
+        # debug (exact)
         if stream.ispositive():
             happy_users_exact.add(username)
             day_part_happy_exact[stream.timeBin()].add(username)
@@ -134,12 +134,14 @@ def question2(ss_size, n_of_favorite_words, stream):
 
     words_counter = SpaceSaving(ss_size)
     dinstict_words = set()
-    while tweet is not None:
-        words = stream.tokenizedTweet()
-        for word in words:
-            words_counter.add(word)
-            dinstict_words.add(word)
-        tweet = stream.nextRecord()
+
+    if tweet.ispositive():
+        while tweet is not None:
+            words = stream.tokenizedTweet()
+            for word in words:
+                words_counter.add(word)
+                dinstict_words.add(word)
+            tweet = stream.nextRecord()
 
     print("exact_words", len(dinstict_words))
     print("favorite_words", words_counter.query(n_of_favorite_words))
@@ -207,7 +209,7 @@ def question4(ss_size, how_many_counts, stream):
 
 if __name__ == "__main__":
 
-    dataset = DS.HandsonDatasets.MEDIUM
+    dataset = DS.HandsonDatasets.HUGE
     print("input: " + dataset.path)
 
     stream = mystream(dataset.path)
