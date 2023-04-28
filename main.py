@@ -19,28 +19,45 @@ def question1(lc_size, stream):
     users = set()
     lc_users = LinearCounter(lc_size)
 
-    lc_happy_users = LinearCounter(lc_size)
-    lc_unhappy_users = LinearCounter(lc_size)
-    lc_morning_tweets = LinearCounter(lc_size)
-    lc_afternoon_tweets = LinearCounter(lc_size)
-    lc_evening_tweets = LinearCounter(lc_size)
-    lc_night_tweets = LinearCounter(lc_size)
-
-    hapyness_to_lc = {True: lc_happy_users, False: lc_unhappy_users}
-
-    day_part_to_lc = {
-        dayPart.MORNING: lc_morning_tweets,
-        dayPart.AFTERNOON: lc_afternoon_tweets,
-        dayPart.EVENING: lc_evening_tweets,
-        dayPart.NIGHT: lc_night_tweets
+    happyness_to_lc = {
+        True: LinearCounter(lc_size),
+        False: LinearCounter(lc_size)
     }
 
-    happy_users_exact = set()
-    day_part_happy_exact = {
-        dayPart.MORNING: set(),
-        dayPart.AFTERNOON: set(),
-        dayPart.EVENING: set(),
-        dayPart.NIGHT: set()
+    happyness_day_part_to_lc = {
+        True: {
+            dayPart.MORNING: LinearCounter(lc_size),
+            dayPart.AFTERNOON: LinearCounter(lc_size),
+            dayPart.EVENING: LinearCounter(lc_size),
+            dayPart.NIGHT: LinearCounter(lc_size)
+        },
+        False: {
+            dayPart.MORNING: LinearCounter(lc_size),
+            dayPart.AFTERNOON: LinearCounter(lc_size),
+            dayPart.EVENING: LinearCounter(lc_size),
+            dayPart.NIGHT: LinearCounter(lc_size)
+        }
+
+    }
+
+    happyness_exact = {
+        True: set(),
+        False: set()
+    }
+    happyness_day_part_exact = {
+        True: {
+            dayPart.MORNING: set(),
+            dayPart.AFTERNOON: set(),
+            dayPart.EVENING: set(),
+            dayPart.NIGHT: set()
+        },
+        False: {
+            dayPart.MORNING: set(),
+            dayPart.AFTERNOON: set(),
+            dayPart.EVENING: set(),
+            dayPart.NIGHT: set()
+        }
+
     }
 
     tweet = stream.nextRecord()
@@ -50,83 +67,134 @@ def question1(lc_size, stream):
         users.add(username)
         lc_users.add(username)
 
-        hapyness_to_lc[stream.ispositive()].add(username)
-        day_part_to_lc[stream.timeBin()].add(username)
+        happyness_to_lc[stream.ispositive()].add(username)
+        happyness_day_part_to_lc[stream.ispositive(
+        )][stream.timeBin()].add(username)
 
-        # debug (exact)
-        if stream.ispositive():
-            happy_users_exact.add(username)
-            day_part_happy_exact[stream.timeBin()].add(username)
+        happyness_exact[stream.ispositive()].add(username)
+        happyness_day_part_exact[stream.ispositive(
+        )][stream.timeBin()].add(username)
 
         tweet = stream.nextRecord()
 
-    happy_morning_users = lc_happy_users.intersect(lc_morning_tweets)
-    happy_afternoon_users = lc_happy_users.intersect(lc_afternoon_tweets)
-    happy_evening_users = lc_happy_users.intersect(lc_evening_tweets)
-    happy_night_users = lc_happy_users.intersect(lc_night_tweets)
-
     print("exact_users", len(users))
     print("estimated_users", lc_users.count_estimation())
-    print("happy",
-          lc_happy_users.count_estimation() / lc_users.count_estimation())
-    print("unhappy",
-          lc_unhappy_users.count_estimation() / lc_users.count_estimation())
+    print("happy_percentage",
+          happyness_to_lc[True].count_estimation() / lc_users.count_estimation())
+    print("unhappy_percentage",
+          happyness_to_lc[False].count_estimation() / lc_users.count_estimation())
 
     print(
         "morning_happy_exact",
-        len(day_part_happy_exact[dayPart.MORNING]))
+        len(happyness_day_part_exact[True][dayPart.MORNING]))
     print(
         "afternoon_happy_exact",
-        len(day_part_happy_exact[dayPart.AFTERNOON]))
+        len(happyness_day_part_exact[True][dayPart.AFTERNOON]))
     print(
         "evening_happy_exact",
-        len(day_part_happy_exact[dayPart.EVENING]))
+        len(happyness_day_part_exact[True][dayPart.EVENING]))
     print(
         "night_happy_exact",
-        len(day_part_happy_exact[dayPart.NIGHT]))
+        len(happyness_day_part_exact[True][dayPart.NIGHT]))
 
     print(
         "morning_happy",
-        happy_morning_users.count_estimation())
+        happyness_day_part_to_lc[True][dayPart.MORNING].count_estimation())
     print(
         "afternoon_happy",
-        happy_afternoon_users.count_estimation())
+        happyness_day_part_to_lc[True][dayPart.AFTERNOON].count_estimation())
     print(
         "evening_happy",
-        happy_evening_users.count_estimation())
+        happyness_day_part_to_lc[True][dayPart.EVENING].count_estimation())
     print(
         "night_happy",
-        happy_night_users.count_estimation())
+        happyness_day_part_to_lc[True][dayPart.NIGHT].count_estimation())
 
     print(
         "morning_happy_exact_percentage",
-        len(day_part_happy_exact[dayPart.MORNING]) / len(happy_users_exact))
+        len(happyness_day_part_exact[True][dayPart.MORNING]) / len(happyness_exact[True]))
     print(
         "afternoon_happy_exact_percentage",
-        len(day_part_happy_exact[dayPart.AFTERNOON]) / len(happy_users_exact))
+        len(happyness_day_part_exact[True][dayPart.AFTERNOON]) / len(happyness_exact[True]))
     print(
         "evening_happy_exact_percentage",
-        len(day_part_happy_exact[dayPart.EVENING]) / len(happy_users_exact))
+        len(happyness_day_part_exact[True][dayPart.EVENING]) / len(happyness_exact[True]))
     print(
         "night_happy_exact_percentage",
-        len(day_part_happy_exact[dayPart.NIGHT]) / len(happy_users_exact))
+        len(happyness_day_part_exact[True][dayPart.NIGHT]) / len(happyness_exact[True]))
 
     print(
         "morning_happy_percentage",
-        happy_morning_users.count_estimation() /
-        lc_happy_users.count_estimation())
+        happyness_day_part_to_lc[True][dayPart.MORNING].count_estimation() /
+        happyness_to_lc[True].count_estimation())
     print(
         "afternoon_happy_percentage",
-        happy_afternoon_users.count_estimation() /
-        lc_happy_users.count_estimation())
+        happyness_day_part_to_lc[True][dayPart.AFTERNOON].count_estimation() /
+        happyness_to_lc[True].count_estimation())
     print(
         "evening_happy_percentage",
-        happy_evening_users.count_estimation() /
-        lc_happy_users.count_estimation())
+        happyness_day_part_to_lc[True][dayPart.EVENING].count_estimation() /
+        happyness_to_lc[True].count_estimation())
     print(
         "night_happy_percentage",
-        happy_night_users.count_estimation() /
-        lc_happy_users.count_estimation())
+        happyness_day_part_to_lc[True][dayPart.NIGHT].count_estimation() /
+        happyness_to_lc[True].count_estimation())
+
+    print(
+        "morning_unhappy_exact",
+        len(happyness_day_part_exact[False][dayPart.MORNING]))
+    print(
+        "afternoon_unhappy_exact",
+        len(happyness_day_part_exact[False][dayPart.AFTERNOON]))
+    print(
+        "evening_unhappy_exact",
+        len(happyness_day_part_exact[False][dayPart.EVENING]))
+    print(
+        "night_unhappy_exact",
+        len(happyness_day_part_exact[False][dayPart.NIGHT]))
+
+    print(
+        "morning_unhappy",
+        happyness_day_part_to_lc[False][dayPart.MORNING].count_estimation())
+    print(
+        "afternoon_unhappy",
+        happyness_day_part_to_lc[False][dayPart.AFTERNOON].count_estimation())
+    print(
+        "evening_unhappy",
+        happyness_day_part_to_lc[False][dayPart.EVENING].count_estimation())
+    print(
+        "night_unhappy",
+        happyness_day_part_to_lc[False][dayPart.NIGHT].count_estimation())
+
+    print(
+        "morning_unhappy_exact_percentage",
+        len(happyness_day_part_exact[False][dayPart.MORNING]) / len(happyness_exact[False]))
+    print(
+        "afternoon_unhappy_exact_percentage",
+        len(happyness_day_part_exact[False][dayPart.AFTERNOON]) / len(happyness_exact[False]))
+    print(
+        "evening_unhappy_exact_percentage",
+        len(happyness_day_part_exact[False][dayPart.EVENING]) / len(happyness_exact[False]))
+    print(
+        "night_unhappy_exact_percentage",
+        len(happyness_day_part_exact[False][dayPart.NIGHT]) / len(happyness_exact[False]))
+
+    print(
+        "morning_unhappy_percentage",
+        happyness_day_part_to_lc[False][dayPart.MORNING].count_estimation() /
+        happyness_to_lc[False].count_estimation())
+    print(
+        "afternoon_unhappy_percentage",
+        happyness_day_part_to_lc[False][dayPart.AFTERNOON].count_estimation() /
+        happyness_to_lc[False].count_estimation())
+    print(
+        "evening_unhappy_percentage",
+        happyness_day_part_to_lc[False][dayPart.EVENING].count_estimation() /
+        happyness_to_lc[False].count_estimation())
+    print(
+        "night_unhappy_percentage",
+        happyness_day_part_to_lc[False][dayPart.NIGHT].count_estimation() /
+        happyness_to_lc[False].count_estimation())
 
 
 def question2(ss_size, n_of_favorite_words, stream):
@@ -209,7 +277,7 @@ def question4(ss_size, how_many_counts, stream):
 
 if __name__ == "__main__":
 
-    dataset = DS.HandsonDatasets.HUGE
+    dataset = DS.HandsonDatasets.MEDIUM
     print("input: " + dataset.path)
 
     stream = mystream(dataset.path)

@@ -1,6 +1,8 @@
 import random
+import smhasher
 
 _memomask = {}
+
 
 def hash_n(n):
     mask = _memomask.get(n)
@@ -9,7 +11,7 @@ def hash_n(n):
         mask = _memomask[n] = random.getrandbits(32)
 
     def myhash(x):
-        return hash(x) ^ mask
+        return smhasher.murmur3_x64_128(x) ^ mask
     # a * hash(x) >> 63
     return myhash
 
