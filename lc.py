@@ -36,3 +36,9 @@ class LinearCounter():
         for i in range(0, len(self.bit_map)):
             to_ret.bit_map[i] = self.bit_map[i] and that.bit_map[i]
         return to_ret
+
+    def union(self, that):
+        to_ret = LinearCounter(len(self.bit_map))
+        for i in range(0, len(self.bit_map)):
+            to_ret.bit_map[i] = self.bit_map[i] or that.bit_map[i]
+        return to_ret

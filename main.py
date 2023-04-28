@@ -11,6 +11,7 @@ from stream import *
 from lc import LinearCounter
 from space_saving import SpaceSaving
 import dataset as DS
+from bloom_filter import BloomFilter
 
 
 def question1(lc_size, stream):
@@ -18,6 +19,9 @@ def question1(lc_size, stream):
     # exact number of users just to check if things are done well
     users = set()
     lc_users = LinearCounter(lc_size)
+
+    morning_users_bf = BloomFilter(8 * lc_size, 8)
+    happy_users_bf = BloomFilter(8 * lc_size, 8)
 
     happyness_to_lc = {
         True: LinearCounter(lc_size),
@@ -37,7 +41,6 @@ def question1(lc_size, stream):
             dayPart.EVENING: LinearCounter(lc_size),
             dayPart.NIGHT: LinearCounter(lc_size)
         }
-
     }
 
     happyness_exact = {
@@ -75,7 +78,15 @@ def question1(lc_size, stream):
         happyness_day_part_exact[stream.ispositive(
         )][stream.timeBin()].add(username)
 
+        if stream.timeBin() == dayPart.MORNING:
+            morning_users_bf.add(username)
+        if stream.ispositive():
+            happy_users_bf.add(username)
+
         tweet = stream.nextRecord()
+
+    print("yuri", morning_users_bf.count_estimation() +
+          happy_users_bf.count_estimation() - (morning_users_bf.union(happy_users_bf).count_estimation()))
 
     print("exact_users", len(users))
     print("estimated_users", lc_users.count_estimation())
@@ -277,7 +288,7 @@ def question4(ss_size, how_many_counts, stream):
 
 if __name__ == "__main__":
 
-    dataset = DS.HandsonDatasets.MEDIUM
+    dataset = DS.HandsonDatasets.HUGE
     print("input: " + dataset.path)
 
     stream = mystream(dataset.path)
