@@ -23,13 +23,10 @@ class BloomFilter():
         -size * ln(unset_bits/size)
         """
         ratio = 1 - float(self.bit_map.count(True)) / float(len(self.bit_map))
-        return int(-(len(self.bit_map) / len(self.hashes)) * math.log(ratio))
-        # ratio = float(self.bit_map.count(False)) / float(len(self.bit_map))
-        # if ratio <= 0.0:
-        #     return len(self.bit_map)
-        # else:
-        #     print(len(self.hashes))
-        #     return int(-len(self.bit_map) * math.log(ratio) / len(self.hashes))
+        if ratio <= 0.0:
+            return len(self.bit_map)
+        else:
+            return int(-(len(self.bit_map) / len(self.hashes)) * math.log(ratio))
 
     def contains(self, value):
         # if it returns False the value isn't into the lc
